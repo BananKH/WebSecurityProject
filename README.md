@@ -24,6 +24,9 @@ This web application provides role-based access control for users. It includes r
 
 - **Email Verification and Reset Password**:
   - PHPMailer
+    
+- **2FAuthentication**:
+  - google authenticator app
 
 ## Setup Instructions
 
