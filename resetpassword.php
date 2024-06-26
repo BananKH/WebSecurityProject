@@ -1,5 +1,4 @@
 <?php
-// Start session to manage user authentication
 session_start();
 include("dbconnection.php");
 
@@ -7,12 +6,12 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-//Load Composer's autoloader
 require 'vendor/autoload.php';
 
 function send_password_reset($get_name, $get_email, $token) {
     $mail = new PHPMailer(true);
 
+    // SMTP Configuration
     $mail->isSMTP();
     $mail->Host = 'smtp.office365.com';
     $mail->Port = 587;
@@ -21,58 +20,68 @@ function send_password_reset($get_name, $get_email, $token) {
     $mail->Password = 'websecurity2024';
     $mail->SMTPSecure = 'tls';
 
+    // Sender and Recipient
     $mail->setFrom('fortestweb@outlook.com', 'Ms.Banan');
-    $mail->addAddress($get_email); // Change recipient email here
+    $mail->addAddress($get_email);
 
+    // Email Content
     $mail->isHTML(true);
     $mail->Subject = 'Reset Password Notification';
-
     $email_template = "
-        <h2>Hello</h2>
+        <h2>Hello $get_name</h2>
         <h3>You are receiving this email because we received a password reset request for your account.</h3>
         <br><br>
-        <a href='http://localhost/myproject/settingpassword.php?token=$token&email=$get_email'>Click Me</a>
+        <a href='http://localhost/myproject/settingpassword.php?token=$token&email=$get_email'>Click here to reset your password</a>
     ";
-
     $mail->Body = $email_template;
 
-    // Send the email
-    $mail->send();
+    // Send Email
+    try {
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        // Log error or handle it gracefully
+        return false;
+    }
 }
+
 if (isset($_POST['send_btn'])) {
-    $email = mysqli_real_escape_string($con, $_POST['email']);#email from user
-    $token = md5(rand());
+    $email = mysqli_real_escape_string($con, $_POST['email']);
 
+    $check_email_query = "SELECT email, username FROM user WHERE email=?";
+    $stmt = mysqli_prepare($con, $check_email_query);
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_store_result($stmt);
 
-    #check if the email in database.
-    $check_email_query = "SELECT email FROM user WHERE email='$email'";
-    $check_email_query_run = mysqli_query($con, $check_email_query);
+    if(mysqli_stmt_num_rows($stmt) > 0) {
+        mysqli_stmt_bind_result($stmt, $get_email, $get_name);
+        mysqli_stmt_fetch($stmt);
 
-    if (mysqli_num_rows($check_email_query_run) > 0) {
-        $row = mysqli_fetch_array($check_email_query_run);
-        $get_name = $row['username'];
-        $get_email = $row['email'];
+        $token = bin2hex(random_bytes(16)); // Generate a secure token
 
-        $update_token = "UPDATE user SET token='$token' ,token_creation_time=NOW(), status=1  WHERE email='$get_email'";
-        $update_token_run = mysqli_query($con, $update_token);
-        if ($update_token_run) {
-            send_password_reset($get_name, $get_email, $token);
+        $update_token_query = "UPDATE user SET token=?, token_creation_time=NOW(), status=1 WHERE email=?";
+        $stmt = mysqli_prepare($con, $update_token_query);
+        mysqli_stmt_bind_param($stmt, "ss", $token, $get_email);
+        $update_token_result = mysqli_stmt_execute($stmt);
+
+        if ($update_token_result && send_password_reset($get_name, $get_email, $token)) {
             $_SESSION['status'] = "An email has been sent to you with instructions to reset your password.";
-            // Redirect the user to the appropriate page
             header("Location: login.php");
-            exit(0);
+            exit();
         } else {
-           echo $_SESSION['status'] = "Something went wrong while updating the token.";
+            $_SESSION['status'] = "Something went wrong while updating the token or sending the email.";
             header("Location: resetpassword.php");
-            exit(0);
+            exit();
         }
     } else {
         $_SESSION['status'] = "No account found with that email.";
         header("Location: resetpassword.php");
-        exit(0);
+        exit();
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -97,3 +106,4 @@ if (isset($_POST['send_btn'])) {
     </form>
 </div>
 </body>
+</html>

@@ -1,129 +1,175 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
-a{
-  text-decoration: none;
+
+a {
+    text-decoration: none;
 }
+
 body {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  background: linear-gradient(135deg, #71b7e6, #9b59b6);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background: linear-gradient(135deg, #71b7e6, #9b59b6);
 }
 
 .container {
-  max-width: 600px;
-  width: 100%; 
-  background-color: #fff;
-  padding: 30px 30px;
-  border-radius: 5px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    max-width: 600px;
+    width: 100%;
+    background-color: #fff;
+    padding: 30px 30px;
+    border-radius: 5px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    margin-top: 20px; /* Added margin top */
 }
 
 .title {
-  font-size: 25px;
-  font-weight: 500;
-  position: relative;
+    font-size: 25px;
+    font-weight: 500;
+    position: relative;
 }
 
 .user-details {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin: 20px 0 16px 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 20px 0 16px 0;
 }
 
-.input-box ,
-.email{
-  flex-grow: 1;
-  margin-bottom: 15;
+.input-box,
+.email {
+    flex-grow: 1;
+    margin-bottom: 15px;
 }
 
 .input-box label.details {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 5px;
+    display: block;
+    font-weight: 500;
+    margin-bottom: 5px;
 }
 
 .user-details .input-box input,
 .user-details .email input {
-  height: 45px;
-  width: 100%;
-  outline: none;
-  font-size: 16px;
-  border-radius: 5px;
-  padding-left: 15px;
-  border: 1px solid #ccc;
-  border-bottom-width: 3px;
+    height: 45px;
+    width: 100%;
+    outline: none;
+    font-size: 16px;
+    border-radius: 5px;
+    padding-left: 15px;
+    border: 1px solid #ccc;
+    border-bottom-width: 3px;
 }
 
 .user-details .input-box input:focus,
 .user-details .input-box input:valid {
-  border-color: #9b59b6;
+    border-color: #9b59b6;
 }
 
 .user-details .email input:focus,
 .user-details .email input:valid {
-  border-color: #9b59b6;
+    border-color: #9b59b6;
 }
 
-.button input {
+.button {
+    margin-top: 20px; /* Added margin top */
+}
+
+.button button {
+    height: 35px;
+    width: 100%;
+    border-radius: 5px;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #71b7e6, #9b59b6);
+}
+
+.button button:hover {
+    background: linear-gradient(-135deg, #71b7e6, #9b59b6);
+}
+
+p {
+    font-size: 15px;
+    font-weight: 300;
+    color: grey;
+    position: relative;
+}
+
+.link {
+    text-align: center;
+    margin: 10px 0;
+    font-size: 17px;
+}
+
+.link a {
+    color: #006692;
+    transition: 0.5s all;
+}
+
+.link a:hover {
+    text-decoration: underline;
+}
+
+.forgot-password-link {
+    text-align: right;
+    margin: 10px 0;
+    font-size: 17px;
+}
+
+.forgot-password-link a {
+    color: #006692;
+    transition: 0.5s all;
+}
+
+.forgot-password-link a:hover {
+    text-decoration: underline;
+}
+
+.container {
+    width: 50%;
+    margin: 10px auto;
+    text-align: center;
+}
+
+.container img {
+    display: block;
+    margin: 0 auto;
+}
+
+
+.button {
+  text-align: center; /* Center align the buttons */
+}
+
+.button a.button-link {
+  display: inline-block; /* Make the link a block element */
+  margin: 10px; /* Add margin around buttons */
+}
+
+.button a.button-link button {
   height: 35px;
-  width: 100%;
+  width: 150px; /* Adjust width as needed */
+  border: none;
   border-radius: 5px;
-  border:none;
   color: #fff;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   letter-spacing: 1px;
   cursor: pointer;
   background: linear-gradient(135deg, #71b7e6, #9b59b6);
+  transition: background 0.3s; /* Add transition effect for hover */
 }
 
-.button input:hover {
+.button a.button-link button:hover {
   background: linear-gradient(-135deg, #71b7e6, #9b59b6);
-}
-
-p {
-  font-size: 15px;
-  font-weight: 300;
-  color: grey;
-  position: relative;
-}
-
-.link{
-  text-align: center;
-  margin: 10px 0;
-  font-size: 17px;
-}
-
-.link a{
-  color: #006692;
-  transition: 0.5s all;
-}
-
-.link a:hover{
-  text-decoration: underline;  
-}
-
-.forgot-password-link {
-  text-align: right;
-  margin: 10px 0;
-  font-size: 17px;
-}
-
-.forgot-password-link a{
-  color: #006692;
-  transition: 0.5s all;
-}
-
-.forgot-password-link a:hover{
-  text-decoration: underline;  
 }

@@ -1,0 +1,23 @@
+<form action="settingpassword.php" method="POST">
+            <!-- CSRF Token -->
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+            
+            <div class="title">Change Password</div>
+            <div class="user-details">
+                <div class="email">
+                    <label>Email</label>
+                    <input type="text" placeholder="Enter your email" name="email" required />
+                </div>
+                <div class="input-box">
+                    <label>New Password</label>
+                    <input type="password" placeholder="Enter new password" name="new_password" required />
+                </div>
+                <div class="input-box">
+                    <label>Confirm Password</label>
+                    <input type="password" placeholder="Confirm new password" name="confirm_password" required />
+                </div>
+            </div>
+            <div class="button">
+                <input type="submit" name="update_pass_btn" value="Update Password" />
+            </div>
+        </form>

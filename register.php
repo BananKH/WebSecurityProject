@@ -1,4 +1,4 @@
-<?php 
+<?php
 // Start session to store user data
 session_start();
 
@@ -6,44 +6,80 @@ session_start();
 include("dbconnection.php");
 
 // Check if the registration form is submitted
-if (isset($_POST['register_btn'])){
+if (isset($_POST['register_btn'])) {
     // Retrieve user input data
-    $username=$_POST['username'];
-    $password=$_POST['password'];
-    $email=$_POST['email'];
-    $confirm_password=$_POST['confirm_password'];
-    
-    // Check if password and confirm password match
-    if ($password != $confirm_password) {
-      echo "<script>alert('password mismacth.'); window.location.href='register.php';</script>";
-        exit(); // Exit to prevent further execution
+    $username = trim($_POST['username']);
+    $password = $_POST['password'];
+    $email = filter_var(trim($_POST['email']), FILTER_VALIDATE_EMAIL);
+    $confirm_password = $_POST['confirm_password'];
+
+    // Validate email
+    if ($email === false) {
+        $_SESSION['error'] = "Invalid email format.";
+        header("Location: register.php");
+        exit();
     }
-    
-    // Check if email already exists in the database
-    $check_email_query="SELECT email from user WHERE email='$email'";
-    $check_email_query_run=mysqli_query($con,$check_email_query);
 
-    if(mysqli_num_rows($check_email_query_run)>0){
-      echo "<script>alert('Email already exists.'); window.location.href='register.php';</script>";
-        exit(); // Exit to prevent further execution
-    } else {
-        // Hash the password using the default hashing algorithm
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    // Check if password and confirm password match
+    if ($password !== $confirm_password) {
+        $_SESSION['error'] = "Passwords do not match.";
+        header("Location: register.php");
+        exit();
+    }
 
-        // Insert user with hashed password into the database
-        $query="INSERT INTO user (username,password,email,role) VALUES ('$username','$hashed_password','$email','1')";
-        $result=mysqli_query($con,$query);
+    // Prepare and bind parameters to check if the email already exists
+    $check_email_query = "SELECT email FROM users WHERE email=?";
+    if ($stmt = mysqli_prepare($con, $check_email_query)) {
+        mysqli_stmt_bind_param($stmt, "s", $email);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_store_result($stmt);
 
-        if($result){
-          echo "<script>alert('Registration Successful.'); window.location.href='login.php';</script>";
-            exit(); // Exit to prevent further execution
-        } else {
-           echo "<script>alert('Registration Failed'); window.location.href='register.php';</script>";
-            exit(); // Exit to prevent further execution
+        if (mysqli_stmt_num_rows($stmt) > 0) {
+            $_SESSION['error'] = "Email already exists.";
+            mysqli_stmt_close($stmt);
+            header("Location: register.php");
+            exit();
         }
+        mysqli_stmt_close($stmt);
+    } else {
+        $_SESSION['error'] = "Database query error.";
+        header("Location: register.php");
+        exit();
+    }
+
+    // Hash the password using the default hashing algorithm
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+    // Prepare and bind parameters to insert the new user into the database
+    $query = "INSERT INTO users (username, password, email, role) VALUES (?, ?, ?, '1')";
+    if ($stmt = mysqli_prepare($con, $query)) {
+        // Bind parameters
+        mysqli_stmt_bind_param($stmt, "sss", $username, $hashed_password, $email);
+
+        if (mysqli_stmt_execute($stmt)) {
+            // Set session variables for the authenticated user
+            $_SESSION['authenticated'] = true;
+            $_SESSION['username'] = $username;
+            // Registration Successful
+            // Redirect the user to a new page to scan the QR code
+            header("Location: scan_qr.php");
+            exit();
+        } else {
+            // Log database error
+            error_log("Database error: " . mysqli_stmt_error($stmt));
+            $_SESSION['error'] = "Database error occurred. Please try again.";
+            header("Location: register.php");
+            exit();
+        }
+        mysqli_stmt_close($stmt);
+    } else {
+        $_SESSION['error'] = "Database query error.";
+        header("Location: register.php");
+        exit();
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -51,13 +87,20 @@ if (isset($_POST['register_btn'])){
   <meta charset="UTF-8" />
   <link rel="stylesheet" href="css/form.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register</title>
 </head>
 <body>
   <div class="container">
     <div class="title">Signup</div>
-    <p>create new account</p>
+    <p>Create a new account</p>
     <div class="content">
       <form action="register.php" method="POST">
+        <?php
+        if (isset($_SESSION['error'])) {
+            echo '<div class="error">' . $_SESSION['error'] . '</div>';
+            unset($_SESSION['error']);
+        }
+        ?>
         <div class="user-details">
           <div class="input-box">
             <label>Username</label>
@@ -65,7 +108,7 @@ if (isset($_POST['register_btn'])){
           </div>
           <div class="email">
             <label>Email</label>
-            <input type="text" placeholder="Enter your email" name="email" required />
+            <input type="email" placeholder="Enter your email" name="email" required />
           </div>
           <div class="input-box">
             <label>Password</label>
@@ -81,9 +124,8 @@ if (isset($_POST['register_btn'])){
         </div>
       </form>
       <br>
-      <div class="link">Already have an account?<a href="login.php">Login Now</a></div>
+      <div class="link">Already have an account? <a href="login.php">Login Now</a></div>
     </div>
   </div>
-  </script>
 </body>
 </html>

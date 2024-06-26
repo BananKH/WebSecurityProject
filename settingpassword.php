@@ -1,24 +1,22 @@
 <?php
 // Start session to manage user authentication
 session_start();
-include ("dbconnection.php");
+include("dbconnection.php");
 
 if (isset($_GET["token"])) {
     $token = $_GET["token"];
     $_SESSION["token"] = $token;
 }
 
-
 if (isset($_POST['email']) && isset($_POST['new_password']) && isset($_POST['confirm_password'])) {
     if (isset($_POST['update_pass_btn'])) {
-
-        $email = $_POST["email"];
+        $email = mysqli_real_escape_string($con, $_POST["email"]);
         $password = $_POST["new_password"];
         $confirm_password = $_POST["confirm_password"];
         $token = $_SESSION["token"];
 
         // Checking token is valid or not
-        $check_token = "SELECT * FROM user WHERE email='$email' and token='$token' and status=1";
+        $check_token = "SELECT * FROM user WHERE email='$email' AND token='$token' AND status=1";
         $check_token_run = mysqli_query($con, $check_token);
 
         if (mysqli_num_rows($check_token_run) > 0) {
@@ -31,7 +29,6 @@ if (isset($_POST['email']) && isset($_POST['new_password']) && isset($_POST['con
                 $update_token_run = mysqli_query($con, $update_token);
 
                 if ($update_password_run) {
-                    
                     $_SESSION['status'] = "New password successfully updated.";
                     header("Location: login.php");
                     exit(0); // Terminate script after success message
@@ -63,8 +60,7 @@ if (isset($_POST['email']) && isset($_POST['new_password']) && isset($_POST['con
 <body>
     <div class="container">
         <form action="settingpassword.php" method="POST">
-            <div class=" title">Change Password
-            </div>
+            <div class="title">Change Password</div>
             <div class="user-details">
                 <div class="email">
                     <label>Email</label>
