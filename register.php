@@ -20,12 +20,20 @@ if (isset($_POST['register_btn'])) {
         exit();
     }
 
-    // Check if password and confirm password match
-    if ($password !== $confirm_password) {
-        $_SESSION['error'] = "Passwords do not match.";
-        header("Location: register.php");
-        exit();
-    }
+    // Check if password meets minimum length requirement
+if (strlen($password) < 6) {
+  $_SESSION['error'] = "Password must be at least 6 characters long.";
+  header("Location: register.php");
+  exit();
+}
+
+// Check if password and confirm password match
+if ($password !== $confirm_password) {
+  $_SESSION['error'] = "Passwords do not match.";
+  header("Location: register.php");
+  exit();
+}
+
 
     // Prepare and bind parameters to check if the email already exists
     $check_email_query = "SELECT email FROM users WHERE email=?";
