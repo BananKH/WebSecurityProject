@@ -44,11 +44,13 @@ This web application ensures robust security with role-based access control for 
 3. **Explore Dashboards:** Navigate through the student or teacher dashboard.
 4. **Password Reset:** Test the password reset feature.
 
-## Security Features
+### Key Security Features
 
-- **Password Security:** Uses salted hashing for secure storage of passwords.
-- **User Authentication:** Implements reCAPTCHA to prevent automated attacks.
+This web application provides role-based access control for users, featuring registration, login, and dashboards tailored for both students and teachers. It prioritizes security with robust measures against XSS, directory traversal, and CSRF vulnerabilities. 
+
+- **Password Security:** Utilizes salted hashing for secure storage of passwords.
+- **User Authentication:** Implements reCAPTCHA to thwart automated attacks during login.
 - **Session Management:** Ensures secure handling of sessions to prevent unauthorized access.
-- **Admin Access Control:** Limits access to admin pages to authorized users.
-- **Password Reset Security:** Implements token-based authentication for secure password resets.
-- **Vulnerability Prevention:** Mitigates CSRF and SQL injection risks through rigorous validation and secure coding practices.
+- **Admin Access Control:** Limits access to administrative functions to authorized personnel.
+- **Password Reset Security:** Utilizes token-based authentication for secure password resets.
+- **Vulnerability Prevention:** Mitigates CSRF and SQL injection risks through stringent validation and secure coding practices.
